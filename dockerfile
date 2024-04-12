@@ -3,28 +3,22 @@ FROM osrf/ros:noetic-desktop-full
 RUN mkdir -p /rosstart
 COPY start-roscore.sh /rosstart
 RUN chmod +x /rosstart/start-roscore.sh
-
-COPY catkin_ws/. catkin_ws/
-WORKDIR /catkin_ws
-RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
-RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
-# Set a working directory
-
-WORKDIR /ros
+RUN mkdir -p /home/lajos
+RUN mkdir -p /home/lajos/catkin_ws
+COPY catkin_ws/. /home/lajos/catkin_ws
+WORKDIR /home/lajos/catkin_ws
+# RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
+# RUN echo "source /home/lajos/catkin_ws/devel/setup.bash" >> ~/.bashrc
 
 # Install some useful tools and dependencies for development
 RUN apt-get update && apt-get install -y \
     ros-noetic-velodyne \
-    nano \
-    wget \
-    curl \
-    git \
     supervisor \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup environment variables needed for ROS
-ENV ROS_WS=/catkin_ws
+ENV ROS_WS=/home/lajos/catkin_ws
 
 # # Create a catkin workspace
 # RUN mkdir -p $ROS_WS/src && \
